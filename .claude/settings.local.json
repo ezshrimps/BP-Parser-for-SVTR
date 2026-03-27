@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:svtrglobal.feishu.cn)",
+      "Bash(python3 -c \":*)",
+      "Bash(npm install:*)",
+      "Bash(npm start:*)",
+      "Bash(netstat -ano)",
+      "Bash(taskkill //F //PID 51336)",
+      "Bash(node batch.js)"
+    ]
+  }
+}

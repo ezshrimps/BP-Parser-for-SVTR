@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>BP Parser for SVTR</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>BP Parser <span>for SVTR</span></h1>
+    </header>
+
+    <!-- Server status -->
+    <div id="server-status-bar" class="server-bar checking">⏳ 检查本地服务状态...</div>
+
+    <!-- Input -->
+    <div class="section">
+      <div class="section-label">BP 内容</div>
+      <div class="tabs">
+        <button class="tab active" data-tab="file">PDF 文件</button>
+        <button class="tab" data-tab="text">文字内容</button>
+      </div>
+
+      <div id="tab-file" class="tab-content active">
+        <div class="upload-area" id="upload-area">
+          <input type="file" id="file-input" accept=".pdf" hidden />
+          <div class="upload-icon">📄</div>
+          <div class="upload-text">点击选择或拖拽 PDF</div>
+          <div id="file-name" class="file-name"></div>
+        </div>
+      </div>
+
+      <div id="tab-text" class="tab-content">
+        <textarea id="text-input" placeholder="粘贴 Business Plan 文字内容..."></textarea>
+      </div>
+
+      <button id="process-btn" class="btn-primary">🔍 解析 BP 内容</button>
+    </div>
+
+    <!-- Results -->
+    <div class="section" id="results-section" hidden>
+      <div class="section-label">提取结果 <span class="hint-inline">（可编辑后再填写）</span></div>
+
+      <div class="field-group">
+        <label>1. 身份类型 *</label>
+        <select id="f-identity">
+          <option value="">— 请选择 —</option>
+          <option value="创业者">创业者</option>
+          <option value="投资人">投资人</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label>2. 姓名 *</label>
+        <input type="text" id="f-name" placeholder="请输入姓名" />
+      </div>
+
+      <div class="field-group">
+        <label>3. 工作单位 *</label>
+        <input type="text" id="f-company" placeholder="公司/机构名称" />
+      </div>
+
+      <div class="field-group">
+        <label>4. 当前职务 *</label>
+        <input type="text" id="f-position" placeholder="职位/头衔" />
+      </div>
+
+      <div class="field-group">
+        <label>5. 个人微信 *</label>
+        <input type="text" id="f-wechat" placeholder="微信号" />
+      </div>
+
+      <div class="field-group">
+        <label>6. 所需服务 *</label>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" class="f-service" value="AI创投库：数据与行业洞察" />AI创投库：数据与行业洞察</label>
+          <label class="checkbox-item"><input type="checkbox" class="f-service" value="AI创投评：公司行业研究洞察" />AI创投评：公司行业研究洞察</label>
+          <label class="checkbox-item"><input type="checkbox" class="f-service" value="AI创投会：线上线下闭门活动" />AI创投会：线上线下闭门活动</label>
+          <label class="checkbox-item"><input type="checkbox" class="f-service" value="AI创投营：找人找钱找方向" />AI创投营：找人找钱找方向</label>
+          <label class="checkbox-item"><input type="checkbox" class="f-service" value="其他" />其他</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>7. 公司邮箱</label>
+        <input type="text" id="f-email" placeholder="company@example.com" />
+      </div>
+
+      <div class="field-group">
+        <label>8. 项目名称 *</label>
+        <input type="text" id="f-project-name" placeholder="一句话介绍主要产品和服务" />
+      </div>
+
+      <div class="field-group">
+        <label>9. 公司介绍 *</label>
+        <textarea id="f-company-intro" placeholder="100-200字，突出细分赛道、核心产品与真实进展"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label>10. 管理团队 *</label>
+        <textarea id="f-team" placeholder="姓名 | 职位 | 背景经历，每人一行"></textarea>
+      </div>
+
+      <div class="field-group">
+        <label>11. 主要诉求 *</label>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" class="f-need" value="融资对接" />融资对接</label>
+          <label class="checkbox-item"><input type="checkbox" class="f-need" value="客户试点" />客户试点</label>
+          <label class="checkbox-item"><input type="checkbox" class="f-need" value="技术人才" />技术人才</label>
+          <label class="checkbox-item"><input type="checkbox" class="f-need" value="国际化出海" />国际化出海</label>
+          <label class="checkbox-item"><input type="checkbox" class="f-need" value="媒体品牌" />媒体品牌</label>
+          <label class="checkbox-item"><input type="checkbox" class="f-need" value="其他" />其他</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>12. 云服务商</label>
+        <div class="checkbox-group">
+          <label class="checkbox-item"><input type="checkbox" class="f-cloud" value="AWS" />AWS</label>
+          <label class="checkbox-item"><input type="checkbox" class="f-cloud" value="GCP" />GCP</label>
+          <label class="checkbox-item"><input type="checkbox" class="f-cloud" value="Azure" />Azure</label>
+          <label class="checkbox-item"><input type="checkbox" class="f-cloud" value="其他" />其他</label>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label>13. 融资目标</label>
+        <select id="f-funding-goal">
+          <option value="">— 请选择 —</option>
+          <option value="&lt;10W">&lt;10W</option>
+          <option value="10w-100W">10w-100W</option>
+          <option value="100W-1000W">100W-1000W</option>
+          <option value="&gt;1000W">&gt;1000W</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label>15. 如何找到我们 *</label>
+        <select id="f-source">
+          <option value="">— 请选择 —</option>
+          <option value="社交媒体">社交媒体</option>
+          <option value="朋友推荐">朋友推荐</option>
+          <option value="公司官网">公司官网</option>
+          <option value="线下活动">线下活动</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label>16. 是否是SVTR会员 *</label>
+        <select id="f-membership">
+          <option value="">— 请选择 —</option>
+          <option value="认证会员">认证会员</option>
+          <option value="个人会员">个人会员</option>
+          <option value="企业会员">企业会员</option>
+          <option value="不是">不是</option>
+        </select>
+      </div>
+
+      <div class="field-group">
+        <label>17. 是否愿意了解SVTR会员</label>
+        <select id="f-member-interest">
+          <option value="">— 请选择 —</option>
+          <option value="暂不需要">暂不需要</option>
+          <option value="审核通过后再了解">审核通过后再了解</option>
+          <option value="希望尽快了解，请联系我">希望尽快了解，请联系我</option>
+        </select>
+      </div>
+
+      <button id="fill-btn" class="btn-primary">✍️ 填写飞书表单</button>
+      <div class="hint" style="margin-top:6px">填写前请确保当前标签页已打开 SVTR 飞书申请表单</div>
+    </div>
+
+    <div id="status" class="status"></div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
